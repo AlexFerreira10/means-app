@@ -5,15 +5,15 @@ import 'package:meals_app/presentation/widgets/meal_item.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen(
-      {super.key, String? title, required List<Meal> meals, required void Function(Meal meal) onToggleFavorite})
-      : _meals = meals,
-        _title = title,
-        _onToggleFavorite = onToggleFavorite;
+  const MealsScreen({
+    super.key,
+    String? title,
+    required List<Meal> meals,
+  })  : _meals = meals,
+        _title = title;
 
   final String? _title;
   final List<Meal> _meals;
-  final void Function(Meal meal) _onToggleFavorite;
 
   void _selectMeal(BuildContext context, Meal meal) {
     Navigator.of(context).push(
@@ -21,7 +21,6 @@ class MealsScreen extends StatelessWidget {
         type: PageTransitionType.fade,
         child: MealDetailsScreen(
           meal: meal,
-          onToggleFavorite: _onToggleFavorite,
         ),
       ),
     );
