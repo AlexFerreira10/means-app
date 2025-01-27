@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/domain/model/meal.dart';
+import 'package:meals_app/presentation/pages/meal_details_screen.dart';
+import 'package:meals_app/presentation/widgets/meal_item.dart';
+import 'package:page_transition/page_transition.dart';
 
 class MealsScreen extends StatelessWidget {
-  const MealsScreen({super.key, required String title, required List<Meal> meals})
+  const MealsScreen(
+      {super.key, String? title, required List<Meal> meals, required void Function(Meal meal) onToggleFavorite})
       : _meals = meals,
-        _title = title;
+        _title = title,
+        _onToggleFavorite = onToggleFavorite;
 
-  final String _title;
+  final String? _title;
   final List<Meal> _meals;
+  final void Function(Meal meal) _onToggleFavorite;
+
+  void _selectMeal(BuildContext context, Meal meal) {
+    Navigator.of(context).push(
+      PageTransition(
+        type: PageTransitionType.fade,
+        child: MealDetailsScreen(
+          meal: meal,
+          onToggleFavorite: _onToggleFavorite,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +40,6 @@ class MealsScreen extends StatelessWidget {
       content = Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Uh oh ... nothing to show here',
@@ -38,10 +55,27 @@ class MealsScreen extends StatelessWidget {
       );
     }
 
+    if (_meals.isNotEmpty) {
+      content = ListView.builder(
+        itemCount: _meals.length,
+        itemBuilder: (ctx, index) => MealItem(
+          meal: _meals[index],
+          onSelectMeal: (meal) {
+            _selectMeal(context, meal);
+          },
+        ),
+      );
+    }
+
+    if (_title == null) {
+      return content;
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: content,
+        title: Text(_title),
       ),
+      body: content,
     );
   }
 }
